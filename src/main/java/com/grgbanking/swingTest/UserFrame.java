@@ -1,7 +1,13 @@
 package com.grgbanking.swingTest;
 
+import com.grgbanking.jpush.Jpush;
+
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
+import javax.swing.event.MenuEvent;
+import javax.swing.event.MenuListener;
+import javax.swing.event.PopupMenuEvent;
+import javax.swing.event.PopupMenuListener;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -26,19 +32,23 @@ public class UserFrame extends JFrame implements ActionListener {
     private JButton jb_enter, jb_exit;
     private MyTrayIcon trayicon;
 
+    private JPanel jp1;
+
+    private JPanel jp2;
+
+    private JPanel jp3;
+
     private JPanel contentPane;
     JPanel panel;
 
     private void initCompoenent() {
 
-        setSize(400, 300);
 
-        setLayout(new GridLayout(5, 2));
-
+        this.setBounds(280,200,380,380);
         //设置窗口居中
-        setLocationRelativeTo(null);
+        this.setLocationRelativeTo(null);
         // 设置窗口不可拉伸
-        setResizable(false);
+        this.setResizable(false);
 
         //点击红X便可以退出整个程序
         //setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -60,16 +70,32 @@ public class UserFrame extends JFrame implements ActionListener {
         jb_exit = new JButton("退出");
         jb_enter.addActionListener(this);
         jb_exit.addActionListener(this);
-        add(jl1);
-        add(jt_username);
-        add(jl2);
-        add(jp_password);
-        add(jl3);
-        add(jt_sex);
-        add(jl4);
-        add(jt_address);
-        add(jb_enter);
-        add(jb_exit);
+
+        jp1=new JPanel();
+        jp1.setSize(400, 300);
+        jp1.setLayout(new GridLayout(5, 2));
+        jp1.add(jl1);
+        jp1.add(jt_username);
+        jp1.add(jl2);
+        jp1.add(jp_password);
+        jp1.add(jl3);
+        jp1.add(jt_sex);
+        jp1.add(jl4);
+        jp1.add(jt_address);
+        jp1.add(jb_enter);
+        jp1.add(jb_exit);
+
+        this.add(jp1);
+
+        jp2 = new JPanel();
+        jp2.setBackground(Color.YELLOW);
+        jp2.add(new JLabel("这里是默认的界面"));
+
+        jp3=new JPanel();
+        jp3.setBackground(Color.BLUE);
+        jp3.add(new JLabel("这是蓝色的界面"));
+
+
         setVisible(true);
 
         JMenuBar jmb = new JMenuBar();
@@ -78,6 +104,8 @@ public class UserFrame extends JFrame implements ActionListener {
 
 
         JMenu agentMenu = new JMenu("Agent");
+
+        JMenu keyMenu=new JMenu("Key");
 
 
         JMenuItem openFileItem = new JMenuItem("Open File...");
@@ -114,34 +142,13 @@ public class UserFrame extends JFrame implements ActionListener {
 
         jmb.add(agentMenu);
 
+        jmb.add(keyMenu);
+
         setJMenuBar(jmb);
 
+        agentMenu.addMenuListener(new MyChangeListener(this));
 
-        contentPane = new JPanel();
-        contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
-        setContentPane(contentPane);
-        contentPane.setLayout(null);
-
-        //亮点在这，panel一定要是全局的！
-        MainView m = new MainView();
-        panel = m.view();
-        panel.setBounds(0, 49, 693, 487);
-        contentPane.add(panel);
-        panel.setLayout(null);
-
-        agentMenu.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-
-                contentPane.remove(panel);
-                SelectView s = new SelectView();
-                panel = s.view();
-                panel.setBounds(0, 49, 693, 487);
-                contentPane.add(panel);
-                panel.setLayout(null);
-                update(getGraphics());
-            }
-        });
+        keyMenu.addMenuListener(new MyChangeListener1(this));
 
 
     }
@@ -266,6 +273,57 @@ public class UserFrame extends JFrame implements ActionListener {
 
     public static void main(String[] args) {
       UserFrame userFrame = new UserFrame();
+    }
+
+    class MyChangeListener implements MenuListener{
+        JFrame jframe;
+        public MyChangeListener(JFrame jframe) {
+            this.jframe = jframe;
+        }
+
+        public void menuSelected(MenuEvent e) {
+            jframe.remove(jp1);//去掉默认JPanel
+            jframe.add(jp2);//加入新的JPanel
+            jframe.validate();//重构整个界面
+        }
+
+        public void menuDeselected(MenuEvent e) {
+
+        }
+
+        public void menuCanceled(MenuEvent e) {
+
+        }
+      /*  @Override
+        public void actionPerformed(ActionEvent e) {
+            jframe.remove(jp1);//去掉默认JPanel
+            jframe.add(jp2);//加入新的JPanel
+            jframe.validate();//重构整个界面
+        }*/
+
+
+    }
+
+    class MyChangeListener1 implements MenuListener{
+        JFrame jframe;
+        public MyChangeListener1(JFrame jframe) {
+            this.jframe = jframe;
+        }
+
+        public void menuSelected(MenuEvent e) {
+            //去掉默认JPanel
+            jframe.remove(jp2);
+            jframe.add(jp3);//加入新的JPanel
+            jframe.validate();//重构整个界面
+        }
+
+        public void menuDeselected(MenuEvent e) {
+
+        }
+
+        public void menuCanceled(MenuEvent e) {
+
+        }
     }
 }
 
